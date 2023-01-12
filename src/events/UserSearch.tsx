@@ -20,6 +20,10 @@ const UserSearch: React.FC = () => {
         setSearch(event.target.value);
     };
 
+    const onDragStart = (event: React.DragEvent<HTMLDivElement>) => {
+        console.log("Dragging...", event);
+    };
+
     return (
         <div>
             <h3>User Search</h3>
@@ -31,6 +35,9 @@ const UserSearch: React.FC = () => {
             )}
             <input value={search} onChange={onChange} />
             <button onClick={onClick}>Search</button>
+            <div draggable onDragStart={onDragStart}>
+                Drag Me
+            </div>
         </div>
     );
 };

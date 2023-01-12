@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 const users = [
     { name: "Sarah", age: 18 },
@@ -11,6 +11,7 @@ const UserSearch: React.FC = () => {
     const [user, setUser] = useState<
         { name: string; age: number } | undefined
     >();
+    const inputRef = useRef<HTMLInputElement | null>(null);
 
     const onClick = () => {
         setUser(users.find((user) => user.name === search));
@@ -18,6 +19,10 @@ const UserSearch: React.FC = () => {
 
     const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearch(event.target.value);
+    };
+
+    const onDragStart = (event: React.DragEvent<HTMLDivElement>) => {
+        console.log("Dragging...", event);
     };
 
     return (
@@ -29,8 +34,11 @@ const UserSearch: React.FC = () => {
                     <p>{user.age}</p>
                 </div>
             )}
-            <input value={search} onChange={onChange} />
+            <input ref={inputRef} value={search} onChange={onChange} />
             <button onClick={onClick}>Search</button>
+            <div draggable onDragStart={onDragStart}>
+                Drag Me
+            </div>
         </div>
     );
 };
