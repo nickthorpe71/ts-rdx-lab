@@ -16,6 +16,14 @@ const UserSearch: React.FC = () => {
         setUser(users.find((user) => user.name === search));
     };
 
+    const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSearch(event.target.value);
+    };
+
+    const onDragStart = (event: React.DragEvent<HTMLDivElement>) => {
+        console.log("Dragging...", event);
+    };
+
     return (
         <div>
             <h3>User Search</h3>
@@ -25,8 +33,11 @@ const UserSearch: React.FC = () => {
                     <p>{user.age}</p>
                 </div>
             )}
-            <input value={search} onChange={(e) => setSearch(e.target.value)} />
+            <input value={search} onChange={onChange} />
             <button onClick={onClick}>Search</button>
+            <div draggable onDragStart={onDragStart}>
+                Drag Me
+            </div>
         </div>
     );
 };
