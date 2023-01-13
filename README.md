@@ -6,3 +6,4 @@ An environment to run experiments for:
 -   Redux
 -   React
 -   Tailwind
+-   WebGL (https://www.tutorialspoint.com/webgl/index.htm)

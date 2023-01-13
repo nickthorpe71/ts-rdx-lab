@@ -1,10 +1,11 @@
 import ReactDOM from "react-dom";
-import UserSearch from "./refs/UserSearch";
+import SelectionSort from "./sorting/SelectionSort";
+import "./index.css";
 
 const App = () => {
     return (
         <div>
-            <UserSearch />
+            <SelectionSort />
         </div>
     );
 };
