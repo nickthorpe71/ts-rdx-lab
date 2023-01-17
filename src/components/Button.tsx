@@ -8,7 +8,7 @@ interface ButtonProps {
 const Button: FC<ButtonProps> = ({ text, onClick }) => {
     return (
         <button
-            className='focus:outline-none rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 bg-transparent font-bold text-zinc-800 border-2 border-zinc-800 border-solid hover:text-zinc-600 hover:border-zinc-600 focus:ring-zinc-900'
+            className='focus:outline-none rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 bg-transparent font-bold text-stone-800 border-2 border-stone-800 border-solid hover:text-black hover:border-black focus:ring-stone-900'
             onClick={onClick}
         >
             {text}

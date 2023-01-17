@@ -9,7 +9,7 @@ import Button from "../components/Button";
 import RangeSlider from "../components/RangeSlider";
 
 const randomArray = (len: number) =>
-    range(len).map(() => Math.floor(Math.random() * 100));
+    range(len).map(() => Math.ceil(Math.random() * 100));
 
 const SelectionSort: React.FC = () => {
     const [array, setArray] = useState<number[]>(randomArray(20));
@@ -47,7 +47,9 @@ const SelectionSort: React.FC = () => {
     };
 
     const handleReset = async () => {
-        setArray(randomArray(numItems));
+        setArray(randomArray(20));
+        setNumItems(20);
+        setDelay(210);
     };
 
     const handleSort = async () => {
@@ -72,7 +74,7 @@ const SelectionSort: React.FC = () => {
                     <div
                         key={index}
                         style={{ height: `${value}%` }}
-                        className='border-zinc-700 w-5 border-2 mx-1 transition-all'
+                        className='border-stone-700 w-5 border-2 mx-1 transition-all'
                     >
                         {}
                     </div>
@@ -92,8 +94,8 @@ const SelectionSort: React.FC = () => {
                         <div>
                             <p className='font-bold'>{`Num items: ${numItems}`}</p>
                             <RangeSlider
-                                min={5}
-                                max={75}
+                                min={2}
+                                max={80}
                                 value={numItems}
                                 onChange={handleNumItemsRange}
                             />

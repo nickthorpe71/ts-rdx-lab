@@ -11,7 +11,7 @@ const Button: FC<RangeSliderProps> = ({ min, max, value, onChange }) => {
     return (
         <input
             type='range'
-            className='w-full h-2 rounded-lg appearance-none cursor-pointer bg-zinc-700 accent-zinc-500'
+            className='w-full h-1 rounded-lg appearance-none cursor-pointer bg-stone-700 accent-stone-500'
             min={min}
             max={max}
             value={value}
