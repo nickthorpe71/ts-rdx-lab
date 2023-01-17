@@ -1,40 +1,53 @@
 import { useState } from "react";
 import { range } from "lodash";
+
+// utils
 import { sleep } from "../utils";
+
+// components
+import Button from "../components/Button";
+import RangeSlider from "../components/RangeSlider";
 
 const randomArray = (len: number) =>
     range(len).map(() => Math.floor(Math.random() * 100));
 
 const SelectionSort: React.FC = () => {
-    const [array, setArray] = useState<number[]>(randomArray(10));
+    const [array, setArray] = useState<number[]>(randomArray(20));
+    const [numItems, setNumItems] = useState<number>(20);
+    const [delay, setDelay] = useState<number>(210); // [ms]
     const [running, setRunning] = useState<boolean>(false);
 
-    const selectionSort = async () => {
+    const selectionSort = async (): Promise<void> => {
         let arrayClone: number[] = [...array];
 
         for (let i = 0; i < array.length - 1; i++) {
             const smallestIndex: number =
                 findIndexOfSmallest(arrayClone.slice(i)) + i;
             if (smallestIndex === i) continue;
-            const smallest: number = arrayClone[smallestIndex];
-            const temp = arrayClone[i];
-            arrayClone[i] = smallest;
-            arrayClone[smallestIndex] = temp;
+            swap(arrayClone, smallestIndex, i);
             setArray([...arrayClone]);
-            await sleep(1000);
+            await sleep(delay);
         }
+    };
+
+    const swap = (array: number[], smallestIndex: number, i: number): void => {
+        const smallest: number = array[smallestIndex];
+        const temp = array[i];
+        array[i] = smallest;
+        array[smallestIndex] = temp;
     };
 
     const findIndexOfSmallest = (array: number[]): number => {
         const smallest: number = array.reduce(
-            (acc, _, index) => (array[acc] < array[index] ? acc : index),
+            (acc: number, _: number, index: number): number =>
+                array[acc] < array[index] ? acc : index,
             0
         );
         return smallest;
     };
 
     const handleReset = async () => {
-        setArray(randomArray(10));
+        setArray(randomArray(numItems));
     };
 
     const handleSort = async () => {
@@ -43,29 +56,62 @@ const SelectionSort: React.FC = () => {
         setRunning(false);
     };
 
-    const getBarClass = (value: number) => {
-        const height = Math.floor((value / 100) * 64);
-        return `bg-zinc-700 w-5 text-center mx-1 h-${height}`;
+    const handleNumItemsRange = (n: number) => {
+        setNumItems(n);
+        setArray(randomArray(n));
     };
 
     return (
         <div className={`h-screen flex flex-col items-center justify-center`}>
             <h1 className='text-3xl font-bold'>Selection Sort</h1>
-            <div className={`w-full flex items-center justify-center h-3/6`}>
+
+            <div
+                className={`w-full flex items-center justify-center h-3/6 my-10`}
+            >
                 {array.map((value, index) => (
-                    <div key={index} className={getBarClass(value)}>
-                        {value}
+                    <div
+                        key={index}
+                        style={{ height: `${value}%` }}
+                        className='border-zinc-700 w-5 border-2 mx-1 transition-all'
+                    >
+                        {}
                     </div>
                 ))}
             </div>
-            {running ? (
-                <p>Running...</p>
-            ) : (
-                <div>
-                    <button onClick={handleReset}>Reset</button>
-                    <button onClick={handleSort}>Sort</button>
-                </div>
-            )}
+            <div className='h-12'>
+                {running ? (
+                    <div>
+                        <p className='font-bold'>Running...</p>
+                    </div>
+                ) : (
+                    <div>
+                        <div>
+                            <Button text='Reset' onClick={handleReset} />
+                            <Button text='Sort' onClick={handleSort} />
+                        </div>
+                        <div>
+                            <p className='font-bold'>{`Num items: ${numItems}`}</p>
+                            <RangeSlider
+                                min={5}
+                                max={75}
+                                value={numItems}
+                                onChange={handleNumItemsRange}
+                            />
+                        </div>
+                        <div>
+                            <p className='font-bold'>{`Delay: ${
+                                delay / 1000
+                            }s`}</p>
+                            <RangeSlider
+                                min={0}
+                                max={1000}
+                                value={delay}
+                                onChange={setDelay}
+                            />
+                        </div>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };
