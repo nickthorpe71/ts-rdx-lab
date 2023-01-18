@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { range } from "lodash";
 
 // utils
@@ -86,13 +86,13 @@ const SelectionSort: React.FC = () => {
                         <p className='font-bold'>Running...</p>
                     </div>
                 ) : (
-                    <div>
+                    <div className='flex gap-2'>
                         <div>
                             <Button text='Reset' onClick={handleReset} />
                             <Button text='Sort' onClick={handleSort} />
                         </div>
                         <div>
-                            <p className='font-bold'>{`Num items: ${numItems}`}</p>
+                            <p className='font-bold text-sm'>{`Num items: ${numItems}`}</p>
                             <RangeSlider
                                 min={2}
                                 max={80}
@@ -101,7 +101,7 @@ const SelectionSort: React.FC = () => {
                             />
                         </div>
                         <div>
-                            <p className='font-bold'>{`Delay: ${
+                            <p className='font-bold text-sm'>{`Delay: ${
                                 delay / 1000
                             }s`}</p>
                             <RangeSlider
