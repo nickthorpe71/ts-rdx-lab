@@ -12,22 +12,42 @@ const randomArray = (len: number) =>
     range(len).map(() => Math.ceil(Math.random() * 100));
 
 const SelectionSort: React.FC = () => {
+    const [highlightsOn, setHighlightsOn] = useState<boolean>(false);
     const [array, setArray] = useState<number[]>(randomArray(20));
+    const [currentIndex, setCurrentIndex] = useState<number>(0);
+    const [consideringIndex, setConsideringIndex] = useState<number | null>(0);
+    const [chosenIndex, setChosenIndex] = useState<number | null>(0);
     const [numItems, setNumItems] = useState<number>(20);
-    const [delay, setDelay] = useState<number>(210); // [ms]
+    const [delay, setDelay] = useState<number>(110); // [ms]
     const [running, setRunning] = useState<boolean>(false);
 
     const selectionSort = async (): Promise<void> => {
+        setHighlightsOn(true);
         let arrayClone: number[] = [...array];
 
         for (let i = 0; i < array.length - 1; i++) {
-            const smallestIndex: number =
-                findIndexOfSmallest(arrayClone.slice(i)) + i;
-            if (smallestIndex === i) continue;
+            setCurrentIndex(i);
+            let smallestIndex: number = i;
+            for (let j = i + 1; j < array.length; j++) {
+                setConsideringIndex(j);
+                await sleep(delay);
+                if (arrayClone[j] < arrayClone[smallestIndex]) {
+                    setChosenIndex(j);
+                    smallestIndex = j;
+                    await sleep(Math.min(350, delay * 3.5));
+                }
+            }
+
+            setConsideringIndex(null);
+            await sleep(Math.min(500, delay * 5));
+            setCurrentIndex(smallestIndex);
+            setChosenIndex(i);
             swap(arrayClone, smallestIndex, i);
             setArray([...arrayClone]);
-            await sleep(delay);
+            await sleep(Math.min(1000, delay * 10));
+            setChosenIndex(null);
         }
+        setHighlightsOn(false);
     };
 
     const swap = (array: number[], smallestIndex: number, i: number): void => {
@@ -35,15 +55,6 @@ const SelectionSort: React.FC = () => {
         const temp = array[i];
         array[i] = smallest;
         array[smallestIndex] = temp;
-    };
-
-    const findIndexOfSmallest = (array: number[]): number => {
-        const smallest: number = array.reduce(
-            (acc: number, _: number, index: number): number =>
-                array[acc] < array[index] ? acc : index,
-            0
-        );
-        return smallest;
     };
 
     const handleReset = async () => {
@@ -63,6 +74,14 @@ const SelectionSort: React.FC = () => {
         setArray(randomArray(n));
     };
 
+    const determineColor = (index: number): string => {
+        if (!highlightsOn) return "border-stone-700";
+        if (index === currentIndex) return "border-zinc-700 bg-zinc-700";
+        if (index === chosenIndex) return "border-red-700 bg-red-700";
+        if (index === consideringIndex) return "border-stone-300 bg-stone-500";
+        return "border-stone-700";
+    };
+
     return (
         <div className={`h-screen flex flex-col items-center justify-center`}>
             <h1 className='text-3xl font-bold'>Selection Sort</h1>
@@ -74,7 +93,9 @@ const SelectionSort: React.FC = () => {
                     <div
                         key={index}
                         style={{ height: `${value}%` }}
-                        className='border-stone-700 w-5 border-2 mx-1 transition-all'
+                        className={`${determineColor(
+                            index
+                        )} w-5 border-2 mx-1 transition-all`}
                     >
                         {}
                     </div>
