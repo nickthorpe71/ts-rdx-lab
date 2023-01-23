@@ -18,9 +18,10 @@ const SelectionSort: React.FC = () => {
     const [consideringIndex, setConsideringIndex] = useState<number | null>(0);
     const [chosenIndex, setChosenIndex] = useState<number | null>(0);
     const [numItems, setNumItems] = useState<number>(20);
-    const [delay, setDelay] = useState<number>(50); // [ms]
+    const [delay, setDelay] = useState<number>(0); // [ms]
     const [running, setRunning] = useState<boolean>(false);
 
+    // Selection sort
     const selectionSort = async (): Promise<void> => {
         setHighlightsOn(true);
         let arrayClone: number[] = [...array];
@@ -34,33 +35,68 @@ const SelectionSort: React.FC = () => {
                 if (arrayClone[j] < arrayClone[smallestIndex]) {
                     setChosenIndex(j);
                     smallestIndex = j;
-                    await sleep(Math.min(250, delay * 2.5));
+                    await sleep(delay);
                 }
             }
 
             setConsideringIndex(null);
-            await sleep(Math.min(400, delay * 4));
+            await sleep(delay * 2);
             setCurrentIndex(smallestIndex);
             setChosenIndex(i);
-            swap(arrayClone, smallestIndex, i);
+            arrayClone = swap(arrayClone, smallestIndex, i);
             setArray([...arrayClone]);
-            await sleep(Math.min(900, delay * 9));
+            await sleep(delay * 4);
             setChosenIndex(null);
         }
         setHighlightsOn(false);
     };
 
-    const swap = (array: number[], smallestIndex: number, i: number): void => {
-        const smallest: number = array[smallestIndex];
-        const temp = array[i];
-        array[i] = smallest;
-        array[smallestIndex] = temp;
+    const swap = (array: number[], s1: number, s2: number): number[] => {
+        const arrClone = [...array];
+        const temp: number = arrClone[s2];
+        arrClone[s2] = arrClone[s1];
+        arrClone[s1] = temp;
+        return arrClone;
+    };
+
+    // Quick sort
+    const quickSort = async (): Promise<void> => {
+        const arrayClone: number[] = [...array];
+        let smallArrContainer = [];
+        let largeArrContainer = [];
+        let pivot = arrayClone[0];
+
+        for (let i = 1; i < arrayClone.length; i++) {
+            if (arrayClone[i] < pivot) {
+                smallArrContainer.push(arrayClone[i]);
+            } else {
+                largeArrContainer.push(arrayClone[i]);
+            }
+        }
+    };
+
+    const quickSortRec = async (): Promise<void> => {
+        const arrayClone: number[] = [...array];
+        const sortedArray = quickSortRecHelper(arrayClone);
+        setArray(sortedArray);
+    };
+
+    const quickSortRecHelper = (arr: number[]): number[] => {
+        if (arr.length <= 1) return arr;
+        const pivot = arr[0];
+        const less = arr.filter((num) => num < pivot);
+        const greater = arr.filter((num) => num > pivot);
+        return [
+            ...quickSortRecHelper(less),
+            pivot,
+            ...quickSortRecHelper(greater),
+        ];
     };
 
     const handleReset = async () => {
         setArray(randomArray(20));
         setNumItems(20);
-        setDelay(50);
+        setDelay(0);
     };
 
     const handleSort = async () => {
@@ -69,7 +105,7 @@ const SelectionSort: React.FC = () => {
         setRunning(false);
     };
 
-    const handleNumItemsRange = (n: number) => {
+    const handleChangeNumItems = (n: number) => {
         setNumItems(n);
         setArray(randomArray(n));
     };
@@ -113,7 +149,7 @@ const SelectionSort: React.FC = () => {
                         <p className='font-bold'>Running...</p>
                     </div>
                 ) : (
-                    <div className='flex gap-2'>
+                    <div className='flex flex-col md:flex-row gap-2'>
                         <div>
                             <Button text='Reset' onClick={handleReset} />
                             <Button text='Sort' onClick={handleSort} />
@@ -124,7 +160,7 @@ const SelectionSort: React.FC = () => {
                                 min={2}
                                 max={80}
                                 value={numItems}
-                                onChange={handleNumItemsRange}
+                                onChange={handleChangeNumItems}
                             />
                         </div>
                         <div>
