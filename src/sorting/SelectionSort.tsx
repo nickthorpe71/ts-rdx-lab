@@ -18,7 +18,7 @@ const SelectionSort: React.FC = () => {
     const [consideringIndex, setConsideringIndex] = useState<number | null>(0);
     const [chosenIndex, setChosenIndex] = useState<number | null>(0);
     const [numItems, setNumItems] = useState<number>(20);
-    const [delay, setDelay] = useState<number>(110); // [ms]
+    const [delay, setDelay] = useState<number>(50); // [ms]
     const [running, setRunning] = useState<boolean>(false);
 
     const selectionSort = async (): Promise<void> => {
@@ -60,7 +60,7 @@ const SelectionSort: React.FC = () => {
     const handleReset = async () => {
         setArray(randomArray(20));
         setNumItems(20);
-        setDelay(210);
+        setDelay(50);
     };
 
     const handleSort = async () => {
@@ -76,10 +76,16 @@ const SelectionSort: React.FC = () => {
 
     const determineColor = (index: number): string => {
         if (!highlightsOn) return "border-stone-700";
-        if (index === currentIndex) return "border-zinc-700 bg-zinc-700";
-        if (index === chosenIndex) return "border-red-700 bg-red-700";
-        if (index === consideringIndex) return "border-stone-300 bg-stone-500";
-        return "border-stone-700";
+        switch (index) {
+            case currentIndex:
+                return "border-stone-900 bg-stone-900";
+            case chosenIndex:
+                return "border-red-700 bg-red-700";
+            case consideringIndex:
+                return "border-stone-200 bg-stone-500";
+            default:
+                return "border-stone-700";
+        }
     };
 
     return (
