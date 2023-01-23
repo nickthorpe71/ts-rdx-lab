@@ -34,17 +34,17 @@ const SelectionSort: React.FC = () => {
                 if (arrayClone[j] < arrayClone[smallestIndex]) {
                     setChosenIndex(j);
                     smallestIndex = j;
-                    await sleep(Math.min(350, delay * 3.5));
+                    await sleep(Math.min(250, delay * 2.5));
                 }
             }
 
             setConsideringIndex(null);
-            await sleep(Math.min(500, delay * 5));
+            await sleep(Math.min(400, delay * 4));
             setCurrentIndex(smallestIndex);
             setChosenIndex(i);
             swap(arrayClone, smallestIndex, i);
             setArray([...arrayClone]);
-            await sleep(Math.min(1000, delay * 10));
+            await sleep(Math.min(900, delay * 9));
             setChosenIndex(null);
         }
         setHighlightsOn(false);
