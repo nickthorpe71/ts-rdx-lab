@@ -43,7 +43,7 @@ const SelectionSort: React.FC = () => {
             await sleep(delay * 2);
             setCurrentIndex(smallestIndex);
             setChosenIndex(i);
-            arrayClone = swap(arrayClone, smallestIndex, i);
+            swap(arrayClone, smallestIndex, i);
             setArray([...arrayClone]);
             await sleep(delay * 4);
             setChosenIndex(null);
@@ -51,46 +51,57 @@ const SelectionSort: React.FC = () => {
         setHighlightsOn(false);
     };
 
-    const swap = (array: number[], s1: number, s2: number): number[] => {
-        const arrClone = [...array];
-        const temp: number = arrClone[s2];
-        arrClone[s2] = arrClone[s1];
-        arrClone[s1] = temp;
-        return arrClone;
+    const swap = (array: number[], s1: number, s2: number): void => {
+        const temp: number = array[s2];
+        array[s2] = array[s1];
+        array[s1] = temp;
     };
 
     // Quick sort
     const quickSort = async (): Promise<void> => {
-        const arrayClone: number[] = [...array];
-        let smallArrContainer = [];
-        let largeArrContainer = [];
-        let pivot = arrayClone[0];
+        let arrayClone: number[] = [...array];
+        let stack: { x: number; y: number }[] = [];
 
-        for (let i = 1; i < arrayClone.length; i++) {
-            if (arrayClone[i] < pivot) {
-                smallArrContainer.push(arrayClone[i]);
-            } else {
-                largeArrContainer.push(arrayClone[i]);
+        let start = 0;
+        let end = arrayClone.length - 1;
+
+        stack.push({ x: start, y: end });
+
+        // The stack is simulating the recursive calls
+
+        while (stack.length > 0) {
+            //Get the start and end from the stack
+            const { x, y } = stack.shift() || { x: -1, y: -1 };
+
+            //Partition the array along the pivot
+            const PI = partitionHigh(arrayClone, x, y);
+
+            //Push sub array with less elements than pivot into the stack
+            if (PI - 1 > x) stack.push({ x: x, y: PI - 1 });
+
+            //Push sub array with greater elements than pivot into the stack
+            if (PI + 1 < y) stack.push({ x: PI + 1, y: y });
+
+            setArray([...arrayClone]);
+            await sleep(delay);
+        }
+
+        setArray([...arrayClone]);
+    };
+
+    const partitionHigh = (arr: number[], low: number, high: number) => {
+        let pivot: number = arr[high];
+        let i: number = low;
+
+        // Partition the array into two parts using the pivot
+        for (let j: number = low; j < high; j++) {
+            if (arr[j] < pivot) {
+                swap(arr, i, j);
+                i++;
             }
         }
-    };
-
-    const quickSortRec = async (): Promise<void> => {
-        const arrayClone: number[] = [...array];
-        const sortedArray = quickSortRecHelper(arrayClone);
-        setArray(sortedArray);
-    };
-
-    const quickSortRecHelper = (arr: number[]): number[] => {
-        if (arr.length <= 1) return arr;
-        const pivot = arr[0];
-        const less = arr.filter((num) => num < pivot);
-        const greater = arr.filter((num) => num > pivot);
-        return [
-            ...quickSortRecHelper(less),
-            pivot,
-            ...quickSortRecHelper(greater),
-        ];
+        swap(arr, i, high);
+        return i;
     };
 
     const handleReset = async () => {
@@ -101,7 +112,7 @@ const SelectionSort: React.FC = () => {
 
     const handleSort = async () => {
         setRunning(true);
-        await selectionSort();
+        await quickSort();
         setRunning(false);
     };
 
@@ -126,8 +137,10 @@ const SelectionSort: React.FC = () => {
 
     return (
         <div className={`h-screen flex flex-col items-center justify-center`}>
-            <h1 className='text-3xl font-bold'>Selection Sort</h1>
-
+            <button className='flex gap-4 hover:text-black hover:border-black focus:ring-stone-900'>
+                <h1 className='text-3xl font-bold'>Selection Sort</h1>
+                <p className='text-xl font-semibold mt-1'>v</p>
+            </button>
             <div
                 className={`w-full flex items-center justify-center h-3/6 my-10`}
             >
