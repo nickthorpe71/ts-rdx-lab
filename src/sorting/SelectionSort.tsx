@@ -7,19 +7,24 @@ import { sleep } from "../utils";
 // components
 import Button from "../components/Button";
 import RangeSlider from "../components/RangeSlider";
+import Dropdown from "../components/Dropdown";
 
 const randomArray = (len: number) =>
     range(len).map(() => Math.ceil(Math.random() * 100));
 
 const SelectionSort: React.FC = () => {
-    const [highlightsOn, setHighlightsOn] = useState<boolean>(false);
-    const [array, setArray] = useState<number[]>(randomArray(20));
+    // sort display state
+    const [array, setArray] = useState<number[]>(randomArray(30));
     const [currentIndex, setCurrentIndex] = useState<number>(0);
     const [consideringIndex, setConsideringIndex] = useState<number | null>(0);
     const [chosenIndex, setChosenIndex] = useState<number | null>(0);
-    const [numItems, setNumItems] = useState<number>(20);
-    const [delay, setDelay] = useState<number>(0); // [ms]
+
+    // sort options state
+    const [highlightsOn, setHighlightsOn] = useState<boolean>(false);
+    const [numItems, setNumItems] = useState<number>(30);
+    const [delay, setDelay] = useState<number>(10); // [ms]
     const [running, setRunning] = useState<boolean>(false);
+    const [sortType, setSortType] = useState<string>("selection");
 
     // Selection sort
     const selectionSort = async (): Promise<void> => {
@@ -112,7 +117,14 @@ const SelectionSort: React.FC = () => {
 
     const handleSort = async () => {
         setRunning(true);
-        await quickSort();
+        switch (sortType) {
+            case "selection":
+                await selectionSort();
+                break;
+            case "quick":
+                await quickSort();
+                break;
+        }
         setRunning(false);
     };
 
@@ -137,10 +149,20 @@ const SelectionSort: React.FC = () => {
 
     return (
         <div className={`h-screen flex flex-col items-center justify-center`}>
-            <button className='flex gap-4 hover:text-black hover:border-black focus:ring-stone-900'>
-                <h1 className='text-3xl font-bold'>Selection Sort</h1>
-                <p className='text-xl font-semibold mt-1'>v</p>
-            </button>
+            <Dropdown
+                items={[
+                    {
+                        id: "selection",
+                        label: "Selection Sort",
+                        onClick: () => setSortType("selection"),
+                    },
+                    {
+                        id: "quick",
+                        label: "Quick Sort",
+                        onClick: () => setSortType("quick"),
+                    },
+                ]}
+            />
             <div
                 className={`w-full flex items-center justify-center h-3/6 my-10`}
             >
